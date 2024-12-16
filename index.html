@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Physics Textbook</title>
+
+  <!-- MathJax for rendering LaTeX -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+
+  <style>
+    /* General Styles */
+    /* General Reset */
+    html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #1e2a38;
+    color: #f5f5f5;
+    line-height: 1.8;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    height: 100%; /* Ensure full height */
+    }
+
+    /* Fixed Header */
+    h1 {
+    position: fixed; /* Lock the header at the top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #4c77af;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 20px 0;
+    font-size: 2.5em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Keep header on top of other elements */
+    }
+
+    /* Sidebar */
+    .sidebar {
+    position: fixed;
+    top: 100px; /* Start below the header */
+    left: 0;
+    width: 250px;
+    height: calc(100vh - 80px); /* Adjust to fit below header */
+    background-color: #2c3e50;
+    color: #f5f5f5;
+    overflow-y: auto;
+    padding: 10px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 900;
+    }
+
+    /* Main Content */
+    .main-content {
+    margin-left: 260px; /* Push the main content to the right of sidebar */
+    padding-top: 100px; /* Add space below the fixed header */
+    padding-bottom: 20px; /* Extra padding for bottom spacing */
+    }
+
+
+    h2 {
+      font-size: 1.8em;
+      color: #78aaff;
+      margin-bottom: 10px;
+    }
+
+    /* Chapter Headers */
+    .chapter-header {
+      font-size: 2em;
+      text-align: center;
+      margin: 40px 0 20px;
+      color: #4ca3ff;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+
+    .section-container {
+      background: #2c3e50;
+      border: 1px solid #34495e;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .section-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    textarea, button {
+      display: block;
+      margin: 15px 0;
+      width: 100%;
+      font-size: 1rem;
+      padding: 10px;
+      border-radius: 4px;
+      border: none;
+    }
+
+    textarea {
+      border: 1px solid #34495e;
+      background-color: #1e2a38;
+      color: #f5f5f5;
+      resize: vertical;
+    }
+
+    button {
+      background-color: #4c77af;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3a5f8f;
+    }
+
+    .response {
+      margin-top: 15px;
+      padding: 15px;
+      background-color: #34495e;
+      border: 1px solid #2c3e50;
+      border-radius: 4px;
+      font-size: 1rem;
+      color: #f5f5f5;
+    }
+    /* Sidebar Styles */
+    /* Sidebar Styles */
+
+
+  </style>
+</head>
+<body>
+  
+
+  <!-- Sidebar -->
+  <!-- <div id="sidebar" class="sidebar">
+    <h3>Saved Responses</h3>
+    <ul id="saved-responses-list"></ul>
+  </div> -->
+  <div id="sidebar" class="sidebar">
+    <h3>Saved Responses</h3>
+    <ul id="saved-responses-list">
+      <li>No responses saved yet</li>
+    </ul>
+  </div>
+  
+  <!-- Main Container -->
+  <div class="main-content">
+    <h1>Prototype for an A.I. Enhanced Physics Text</h1>
+    <!-- Your existing content (Newton's Laws, Energy, etc.) goes here -->
+
+  <div class="container">
+
+    
+    <div class="chapter-header">Preface</div>
+    <div class="section-container">
+        <div>
+            This rudimentary web-based physics text is the outcome of a final project for the 
+            course ECE 495 - Natural Language Processing at Duke University. As a reaction to the rapid proliferation of AI in recent times, I aim to 
+            design a prototype for a physics text that encourages learning with AI natively. This offers many advantages. For instance,
+            instructors can tailor the nature of AI responses. This offers the ability to use AI in a controlled setting purely to enhance learning.
+            To make an analogy, formula sheets are often allowed in exam rooms, but rarely ever is the entire textbook allowed. In a similar vein,
+            AI models will become standard components in the classroom in the future, and reduced models will be used instead of asking, say, GPT-10 PRO MAX to
+            do an entire exam for you. Just as creating an on-paper reference sheet is very valuable pedagogically, so is the ability to use AI strategically and sustainably.
+            Morever, an interactive text is fundamental more accesible since readers of varying skill levels can benefit from it.
+        </div>
+    </div>
+    <div class="chapter-header">Implementation Notes</div>
+    <div class="section-container">
+        <div>
+            This text utilizes OpenAI's GPT-4 for answer generation. The reason for doing so was that it would be able to 
+            provide more powerful responses than any model I could train in a reasonable time. In the back end, the model is instructed 
+            to act as a helpful assistant (see write up for more details) for introductory physics questions. Moreover, each prompt has context that is hidden from the user, such as brief explanations
+            of the solutions to the sample problems to ensure the model does not go completely astray. Moreover, the model is instructed to elaborate without restraint in the text sections, but provide only short hints for the 
+            problems.
+        </div>
+    </div>
+    <!-- Chapter 1 Header -->
+    <div class="chapter-header">Chapter 1: Newton's Laws</div>
+
+    
+    <!-- Section: Newton's First Law -->
+    <div class="section-container">
+      <h2>Newton's First Law</h2>
+      <div>
+        Newton's First Law states that "an object in motion will stay in motion unless acted on by an external force."
+        In modern times, we consider this a fact, but for a minute, let's appreciate the fact this is not completely obvious.
+
+        When we play catch with a friend, the object being thrown around does not continue flying off into space indefinitely.
+        Instead, it assumes a parabolic trajectory toward the ground 
+        (assuming no air resistance, of course, and flat spacetime), 
+        or your friend's baseball mitt.
+
+        Suppose you are an observer who was unaware of the fact that Earth was a massive object exerting a radially inward force.
+        You might reasonably conclude that objects tend to stop moving, even in the absence of an external force.
+
+        However, you and I know that the Earth exerts a gravitational force on all objects, which is the real reason 
+        that they stop moving. In space, they would continue on forever!
+      </div>
+      <textarea id="question-newtonfirstlaw" placeholder="Ask a question about Newton's First Law..."></textarea>
+      <button onclick="askAPI('newtonfirstlaw', 'response-newtonfirstlaw')">Submit</button>
+      <div id="response-newtonfirstlaw" class="response"></div>
+      <!-- Save Response Button -->
+      <button onclick="saveResponse('response-newtonfirstlaw', 'Newton\'s First Law')">Save Response</button>
+      
+
+    </div>
+
+    <!-- Section: Newton's Second Law -->
+    <div class="section-container">
+        <h2>Newton's Second Law: Net Forces</h2>
+        <div>
+        Newton's Second Law states that the sum of forces acting on an object is equal to the mass of that object times its acceleration:
+        <p>$$ \mathbf{F} = m \mathbf{a} $$</p>
+        This is a useful formula because, if we understand the forces acting on an object, we can determine its acceleration, velocity, and trajectory using the kinematic equations.
+        For a constant force \(F \) acting on an object with mass \( m \), the kinematic equations can be derived as follows:
+    
+        <p>
+            $$
+            \begin{align}
+                F &= ma  \\
+                \int_0^t a \; dt &= \int \frac{F}{m} \; dt \\
+                v(t) - v(0) &= \frac{F}{m} t \\
+                \int_0^t v(t) \; dt &= \int \left(\frac{F}{m} t + v(0) \right) \; dt \\
+                x(t) - x(0) &= \frac{F}{m} t^2 + v(0) t \\
+                x(t) &= \frac{F}{m} t^2 + v(0)t + x(0)
+            \end{align}
+            $$
+        </p>
+    
+        Here, \(v(0) \) and \(x(0) \)represent the initial velocity and position, respectively. These are referred to as the <i>initial conditions</i>. Plotting this equation with time \(t\) on the horizontal axis \( x(t)\) on the vertical axis yields the parabolic trajectory discussed in the previous section.
+    
+        <p>This equation describes motion in one dimension. However, we can use vectors to extend this to three-dimensional motion, denoted in bold:</p>
+    
+        <p>
+            $$
+            \mathbf{x}(t) = \begin{bmatrix}
+                x(t) \\
+                y(t) \\
+                z(t)
+            \end{bmatrix}, \quad
+            \mathbf{v}(t) = \begin{bmatrix}
+                v_x(t) \\
+                v_y(t) \\
+                v_z(t)
+            \end{bmatrix}, \quad
+            \mathbf{a}(t) = \begin{bmatrix}
+                a_x(t) \\
+                a_y(t) \\
+                a_z(t)
+            \end{bmatrix}, \quad
+            \mathbf{F}(t) = \begin{bmatrix}
+                F_x(t) \\
+                F_y(t) \\
+                F_z(t)
+            \end{bmatrix}
+            $$
+        </p>
+    
+        Here, each component describes the respective quantity in a spatial direction. Notice that we now explicitly allow force and acceleration to vary with time. This leads to much more exciting equations of motion! Fixing the force for each spatial component yields:
+    
+        <p>
+            $$
+            \mathbf{x}(t) = \frac{\mathbf{F}}{m} t^2 + \mathbf{v}(0)t + \mathbf{x}(0)
+            $$
+        </p>
+    
+        This equation is virtually identical to the one-dimensional case but encodes three separate equations—one for each spatial dimension. Try writing it out for yourself to see!
+        </div>
+        <textarea id="question-newtonsecondlaw" placeholder="Ask a question about Newton's Second Law..."></textarea>
+        <button onclick="askAPI('newtonsecondlaw', 'response-newtonsecondlaw')">Submit</button>
+        <div id="response-newtonsecondlaw" class="response"></div>
+        <button onclick="saveResponse('response-newtonsecondlaw', 'Newton\'s Second Law')">Save Response</button>
+    </div>
+
+    <!-- Section: Newton's Second Law -->
+    <div class="section-container">
+        <h2>Newton's Third Law: Equal and Opposite Forces</h2>
+        <div>
+            Newton's Third Law states that for every action there is an equal and opposite reaction. If you push on a wall, the wall pushes back on you. If you kick a soccer ball, the soccer ball kicks you back, sort of. 
+            More formally, for objects \( a\) and \( b\)
+            <p> $$ F_{ab} = -F_{ba}$$ </p>
+            where the left side is the force on \( a\) by \(b\) and the right side is the negation
+            of the force on \(b\) by \(a\). That's nearly all there is to it! The next best thing is to solve related problems.
+        </div>
+        <textarea id="question-newtonthirdlaw" placeholder="Ask a question about Newton's Third Law..."></textarea>
+        <button onclick="askAPI('newtonthirdlaw', 'response-newtonthirdlaw')">Submit</button>
+        <div id="response-newtonthirdlaw" class="response"></div>
+        <button onclick="saveResponse('response-newtonthirdlaw', 'Newton\'s Third Law')">Save Response</button>
+    </div>
+
+    <!-- Section: Newton's Second Law -->
+    <div class="section-container">
+        <h2>Chapter 1 Problems</h2>
+        <div>
+            1. Suppose you are doing donuts in a Walmart parking lot going in perfect circles. Your friend in the backseat throws a projectile straight up in the air. Describe its motion relative to the car.<br>
+
+            2. Consider a strong gust of wind exerting a constant force of \(F = 10\) N on \( 5 \) kg object initially moving with velocity of \(5 \) m/s and is \(10 \) m above the ground. Assume the force is acting on the object in the direction of its motion. Assuming a downward gravitational acceleration of \(g = 9.8 \textrm{m/s}^2\), find the how much further the object travels due to the gust of wind than it would have otherwise. <br>
+            3. Repeat the problem above, but let \(F \rightarrow F(t) = (10 \textrm{ N})t^2. \) <br>
+            4. Conceptually explain how paddle boating works using Newton's Third Law.
+        </div>
+        <textarea id="question-newtonproblems" placeholder="Ask a question about any of these problems..."></textarea>
+        <button onclick="askAPI('newtonproblems', 'response-newtonproblems')">Submit</button>
+        <div id="response-newtonproblems" class="response"></div>
+    </div>
+  
+
+    <!-- Chapter 2 Header -->
+    <div class="chapter-header">Chapter 2: Energy and Momentum</div>
+
+    <!-- Section: Energy -->
+    <div class="section-container">
+      <h2>Energy and Energy Conservation</h2>
+            The best way to get a sense of <i>energy</i> is to solve problems, but before doing that, I suppose we can make a few definitions. (This is true for all physics problems, since every physical quantity was just made up by humans. It just turns out that we have been solving projectile motion problems since infancy so quantities like "velocity" and "position" make more sense at first compared to ones like "energy".) Mechanical energy can be written as 
+        <p>$$E = K + U$$</p>
+        where \(E\) is the total energy, $K$ is the kinetic energy, and \(U\) is the potential energy. These quantities are typically problem specific. For example, for a simple projectile a small distance above the surface of the Earth, 
+        the kinetic and potential energies are given as 
+        <p> $$K = \frac{1}{2} m v^2 \quad \textrm{ and } \quad U = mgh$$</p>
+        where \(m\) is the max, \(v\) is the speed, \(h\) is the height above the ground, and \(g\) is the usual gravitational acceleration. Until the ball hits the ground and loses energy to bouncing off the ground, $E$ is a constant value. That is, energy is conserved.<br>
+        Total energy of a system is conserved as long as no <i>non-conservative</i> forces are at play. Examples of non-conservative forces are friction and air resistance. Gravity is a conservative force. For the reader familiar with multivariable calculus, conservative forces satisfy 
+        <p>$$\mathbf{F} = -\nabla U$$</p>
+        where \(U\) is a scalar function known as the potential. 
+
+      <textarea id="question-energy" placeholder="Ask a question about Energy..."></textarea>
+      <button onclick="askAPI('energy', 'response-energy')">Submit</button>
+      <div id="response-energy" class="response"></div>
+      <button onclick="saveResponse('response-newtonfirstlaw', 'Energy')">Save Response</button>
+    </div>
+
+    <!-- Section: Momentum -->
+    <div class="section-container">
+      <h2>Momentum and Conservation of Momentum</h2>
+      Momentum is a familiar concept in everyday life. For example, when you are driving down the highway, you have a lot of momentum. When you are a pedestrian waiting for the crosswalk, you have no momentum, at least relative to the ground. The momentum \(\mathbf{p}\) of an object with mass \(m\) moving at speed \(v\) can be expressed as
+        <p>$$\mathbf{p} = m \mathbf{v}$$</p>
+     Momentum is conserved for a system unless acted on by outside forces. This is helpful for collisions. For instance, suppose we have two objects of masses \(m_1\) and \(m_2\) and velocities of \(v_1\) and \(v_2\) that collide in 1 dimension and stick together. We can write down the following momentum conservation equation:
+        <p>$$\begin{align}
+            p_1 + p_2 &= p_{\textrm{final}}\\
+            m_1 v_1 + m_2 v_2 &= (m_1 + m_2) v_f
+        \end{align}$$</p>
+        where \(p_f\)is the momentum of the conserved system. We can solve this equation with momentum conservation alone. If the objects bounce off eachother in what is known as an elastic collision,
+        we must factor in energy conservation. That is, we must solve the following system:
+        <p>$$\begin{align}
+            m_1 v_{1i} + m_2 v_{2i} &= m_1 v_{1f} + m_2 v_{2f} \\
+            \frac{1}{2} m {v_{1i}}^2 + \frac{1}{2} mv_{2i}^2 &= \frac{1}{2} mv_{1f}^2 + \frac{1}{2} mv_{2f}^2 + E_{\textrm{loss}}
+        \end{align}$$</p>
+        where the additional subscript on the velocities indicate intitial and final values, and the second equation accounts for the energy lost. 
+      <textarea id="question-momentum" placeholder="Ask a question about Momentum..."></textarea>
+      <button onclick="askAPI('momentum', 'response-momentum')">Submit</button>
+      <div id="response-momentum" class="response"></div>
+      <button onclick="saveResponse('response-momentum', 'Momentum')">Save Response</button>
+    </div>
+
+    <!-- Section: Newton's Second Law -->
+    <div class="section-container">
+        <h2>Chapter 2 Problems</h2>
+        <div>
+            1. You (70 kg) are standing on a frictionless infinite slab of ice. A stack of 10 hockey pucks (0.17 kg each) come in from infinity with a speed of 25 m/s of and you catch all of them. What is your change in speed after catching the stack of pucks? <br>
+            2. Challenge: Suppose you are a joyful monkey swinging from tree branch to tree branch. While in mid-air, you (15 kg) throw a bundle of bananas (3 kg) to a friend in a nearby tree such that you release the bundle perpendicular to your trajectory, parallel to the ground, and at your maximum height. Moreover, your speed at maximum height is 5 m/s, the tree brances are 10 m apart, and you aim to jump from the middle of one branch to the middle of the other, assuming no bananas are thrown. If each tree branch is 3 m long, how fast can you throw the bananas until you would be set of course enough to miss the branch? Assume air resistance is negligible, gravitational acceleration is \( g = 9.8\) m/s, and that you can be modeled as a sphere with radius 1 m. For completely clarity, you can also assume that the tree branches would form opposite sides of a rectangle. <br>
+            3. You are running due northeast and collide with a person running due north. Assume you can again be modeled as a point with mass \(m_1\) and the other person has mass \(m_2\). After the collision, their speed is \(v_1\), making an angle of $15$ degrees with the due north axis and 75 degrees with the due east axis. Moreover, the collision is perfectly elestic (no energy is lost). What is your trajectory? <br>
+
+        </div>
+        <textarea id="question-emomproblems" placeholder="Ask a question about any of these problems..."></textarea>
+        <button onclick="askAPI('emomproblems', 'response-emomproblems')">Submit</button>
+        <div id="response-emomproblems" class="response"></div>
+    </div>
+  </div>
+
+    
+
+
+  </div>
+
+  <script>
+    const contexts = {
+        newtonfirstlaw: `
+        <h2>Newton's First Law</h2>
+        <p>Newton's First Law states that "an object in motion will stay in motion unless acted on by an external force."
+        In modern times, we consider this a fact, but for a minute, let's appreciate the fact this is not completely obvious.</p>
+
+        <p>When we play catch with a friend, the object being thrown around does not continue flying off into space indefinitely.
+        Instead, it assumes a parabolic trajectory toward the ground (assuming no air resistance, of course, and flat spacetime),
+        or your friend's baseball mitt.</p>
+
+        <p>Suppose you are an observer who was unaware of the fact that Earth was a massive object exerting a radially inward force.
+        You might reasonably conclude that objects tend to stop moving, even in the absence of an external force.</p>
+
+        <p>However, you and I know that the Earth exerts a gravitational force on all objects, which is the real reason 
+        that they stop moving. In space, they would continue on forever!</p>
+        `,
+
+        newtonsecondlaw: `
+        <h2>Newton's Second Law: Net Forces</h2>
+        <p>Newton's Second Law states that the sum of forces acting on an object is equal to the mass of that object times its acceleration:</p>
+        <p>$$ \\mathbf{F} = m \\mathbf{a} $$</p>
+
+        <p>This is a useful formula because, if we understand the forces acting on an object, we can determine its acceleration, velocity, and trajectory using the kinematic equations.
+        For a constant force \(F \) acting on an object with mass \( m \), the kinematic equations can be derived as follows:</p>
+
+        <p>$$
+        \\begin{align}
+            F &= ma  \\\\
+            \\int_0^t a \\, dt &= \\int \\frac{F}{m} \\, dt \\\\
+            v(t) - v(0) &= \\frac{F}{m} t \\\\
+            \\int_0^t v(t) \\, dt &= \\int \\left(\\frac{F}{m} t + v(0) \\right) \\, dt \\\\
+            x(t) - x(0) &= \\frac{F}{m} t^2 + v(0) t \\\\
+            x(t) &= \\frac{F}{m} t^2 + v(0)t + x(0)
+        \\end{align}
+        $$</p>
+
+        <p>This equation describes motion in one dimension. However, we can use vectors to extend this to three-dimensional motion, denoted in bold:</p>
+        <p>$$
+        \\mathbf{x}(t) = \\begin{bmatrix}
+            x(t) \\\\
+            y(t) \\\\
+            z(t)
+        \\end{bmatrix}, \\quad
+        \\mathbf{v}(t) = \\begin{bmatrix}
+            v_x(t) \\\\
+            v_y(t) \\\\
+            v_z(t)
+        \\end{bmatrix}, \\quad
+        \\mathbf{a}(t) = \\begin{bmatrix}
+            a_x(t) \\\\
+            a_y(t) \\\\
+            a_z(t)
+        \\end{bmatrix}, \\quad
+        \\mathbf{F}(t) = \\begin{bmatrix}
+            F_x(t) \\\\
+            F_y(t) \\\\
+            F_z(t)
+        \\end{bmatrix}
+        $$</p>
+        `,
+
+        newtonthirdlaw: `
+        <h2>Newton's Third Law: Equal and Opposite Forces</h2>
+        <p>Newton's Third Law states that for every action there is an equal and opposite reaction. If you push on a wall, the wall pushes back on you.
+        If you kick a soccer ball, the soccer ball kicks you back, sort of.</p>
+
+        <p>More formally, for objects \( a \) and \( b \):</p>
+        <p>$$ F_{ab} = -F_{ba} $$</p>
+        <p>where the left side is the force on \( a \) by \( b \) and the right side is the negation of the force on \( b \) by \( a \).</p>
+        <p>That's nearly all there is to it! The next best thing is to solve related problems.</p>
+        `,
+
+        energy: `
+        <h2>Energy and Energy Conservation</h2>
+        <p>Mechanical energy can be written as:</p>
+        <p>$$ E = K + U $$</p>
+        <p>For a simple projectile a small distance above the Earth:</p>
+        <p>$$ K = \\frac{1}{2} m v^2 \\quad \\text{and} \\quad U = mgh $$</p>
+        <p>Total energy is conserved unless non-conservative forces (e.g., friction, air resistance) are present.</p>
+        `,
+        momentum: `
+        <h2>Momentum and Conservation of Momentum</h2>
+        <p>The momentum \\( \\mathbf{p} \\) of an object is defined as:</p>
+        <p>$$ \\mathbf{p} = m \\mathbf{v} $$</p>
+        <p>Momentum is conserved unless acted on by external forces. For two objects colliding and sticking together:</p>
+        <p>$$ m_1 v_1 + m_2 v_2 = (m_1 + m_2) v_f $$</p>
+        <p>In elastic collisions, energy is also conserved:</p>
+        <p>$$ \\frac{1}{2} m_1 v_1^2 + \\frac{1}{2} m_2 v_2^2 = \\frac{1}{2} (m_1 + m_2) v_f^2 $$</p>
+        `,
+        newtonproblems: `
+            1. Suppose you are doing donuts in a Walmart parking lot going in perfect circles. Your friend in the backseat throws a projectile straight up in the air. Describe its motion relative to the car. (main idea: projectile has inertia tangential to the circle) <br>
+            2. Consider a strong gust of wind exerting a constant force of \(F = 10\) N on \( 5 \) kg object initially moving with velocity of \(5 \) m/s and is \(10 \) m above the ground. Assume the force is acting on the object in the direction of its motion. Assuming a downward gravitational acceleration of \(g = 9.8 \textrm{m/s}^2\), find the how much further the object travels due to the gust of wind than it would have otherwise. (main idea: use kinematic equations in 2 dimensions) <br>
+            3. Repeat the problem above, but let \(F \rightarrow F(t) = (10 \textrm{ N})t^2. \) (main idea: same as previous, but need to integrate the force w.r.t to get the more complex kinematic equations.)<br>
+            4. Conceptually explain how paddle boating works using Newton's Third Law. (main idea: pushing back on water pushes forward on you.)
+            These are problems. The solution should not be provided, rather, small hints, not more than 20-30 words. AGAIN, NEVER PROVIDE THE ANSWER STRAIGHT AWAY.
+        `,
+        emomproblems: `
+            1. You (70 kg) are standing on a frictionless infinite slab of ice. A stack of 10 hockey pucks (0.17 kg each) come in from infinity with a speed of 25 m/s of and you catch all of them. What is your change in speed after catching the stack of pucks? (main idea: conserve momentum) <br>
+            2. Challenge: Suppose you are a joyful monkey swinging from tree branch to tree branch. While in mid-air, you (15 kg) throw a bundle of bananas (3 kg) to a friend in a nearby tree such that you release the bundle perpendicular to your trajectory, parallel to the ground, and at your maximum height. Moreover, your speed at maximum height is 5 m/s, the tree brances are 10 m apart, and you aim to jump from the middle of one branch to the middle of the other, assuming no bananas are thrown. If each tree branch is 3 m long, how fast can you throw the bananas until you would be set of course enough to miss the branch? Assume air resistance is negligible, gravitational acceleration is \( g = 9.8\) m/s, and that you can be modeled as a sphere with radius 1 m. For completely clarity, you can also assume that the tree branches would form opposite sides of a rectangle. (main idea: use kinematics to find monkey max high, use conservation of momentum and calculate deviation.) <br>
+            3. You are running due northeast and collide with a person running due north. Assume you can again be modeled as a point with mass \(m_1\) and the other person has mass \(m_2\). After the collision, their speed is \(v_1\), making an angle of $15$ degrees with the due north axis and 75 degrees with the due east axis. Moreover, the collision is perfectly elestic (no energy is lost). What is your trajectory? (main idea: use energy and momentum conservation)<br>
+            These are problems. The solution should not be provided, rather, small hints, not more than 20-30 words. AGAIN, NEVER PROVIDE THE ANSWER STRAIGHT AWAY.
+
+        `
+    };
+
+    async function askAPI(sectionKey, responseId) {
+      const question = document.getElementById(`question-${sectionKey}`).value;
+
+      if (!question) {
+        alert("Please enter a question!");
+        return;
+      }
+
+      const payload = {
+        question: question,
+        context: contexts[sectionKey]
+      };
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/qa', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        const responseElement = document.getElementById(responseId);
+
+        responseElement.innerHTML = data.answer || "No response received.";
+        if (window.MathJax) {
+          MathJax.typesetPromise([responseElement]);
+        }
+      } catch (error) {
+        document.getElementById(responseId).innerText = "Error communicating with the API.";
+      }
+    }
+    document.addEventListener("DOMContentLoaded", loadSavedResponses);
+
+    // Save a response with its corresponding question and answer
+    function saveResponse(responseId, title) {
+    const responseElement = document.getElementById(responseId);
+    const responseContent = responseElement.innerHTML.trim();
+    const questionInput = document.querySelector(`#question-${responseId.split('-')[1]}`);
+    const questionText = questionInput.value.trim();
+
+    if (responseContent && questionText) {
+        const responseKey = `response-${Date.now()}`; // Unique key with timestamp
+        const savedData = { title, question: questionText, answer: responseContent };
+
+        // Save to localStorage
+        localStorage.setItem(responseKey, JSON.stringify(savedData));
+
+        // Update Sidebar
+        addToSidebar(responseKey, savedData);
+        alert("Response saved successfully!");
+    } else {
+        alert("Please ask a question and get a response before saving!");
+    }
+    }
+
+    // Load all saved responses on page load
+    function loadSavedResponses() {
+    const sidebarList = document.getElementById("saved-responses-list");
+    sidebarList.innerHTML = ""; // Clear existing items
+
+    for (let key in localStorage) {
+        if (key.startsWith("response-")) {
+        const savedData = JSON.parse(localStorage.getItem(key));
+        addToSidebar(key, savedData);
+        }
+    }
+    }
+
+    // Add an item to the sidebar
+    function addToSidebar(key, data) {
+    const sidebarList = document.getElementById("saved-responses-list");
+    const listItem = document.createElement("li");
+    listItem.style.display = "flex";
+    listItem.style.justifyContent = "space-between";
+    listItem.style.alignItems = "center";
+    listItem.style.padding = "10px 20px";
+    listItem.style.borderBottom = "3px solid #3a4a5e";
+    listItem.style.color = "#78aaff";
+
+    // Content for the saved question
+    const content = document.createElement("div");
+    content.style.cursor = "pointer";
+    content.innerHTML = `
+        <strong>${data.title}</strong>:
+        <div style="font-size: 0.9em; color: #aaa;">${data.question}</div>
+    `;
+    content.onclick = () => displaySavedResponse(data); // Open the response when clicked
+
+    // Delete button (X)
+    const deleteBtn = document.createElement("span");
+    deleteBtn.innerHTML = "&#10005;"; // Unicode "X"
+    deleteBtn.style.cursor = "pointer";
+    deleteBtn.style.color = "0000";
+    deleteBtn.style.fontSize = "1.2em";
+    deleteBtn.title = "Delete this response";
+
+    deleteBtn.onclick = () => {
+        // Remove from localStorage
+        localStorage.removeItem(key);
+
+        // Remove the list item from the sidebar
+        sidebarList.removeChild(listItem);
+    };
+
+    // Append content and delete button to the list item
+    listItem.appendChild(content);
+    listItem.appendChild(deleteBtn);
+
+    // Add the list item to the sidebar
+    sidebarList.appendChild(listItem);
+    }
+
+
+    // Display saved response dynamically in the main content
+    // Display saved response as a modal popup
+    function displaySavedResponse(data) {
+        // Create the modal background
+        const modalBackground = document.createElement("div");
+        modalBackground.id = "modal-background";
+        modalBackground.style.position = "fixed";
+        modalBackground.style.top = "0";
+        modalBackground.style.left = "0";
+        modalBackground.style.width = "100vw";
+        modalBackground.style.height = "100vh";
+        modalBackground.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+        modalBackground.style.zIndex = "1000";
+        modalBackground.style.display = "flex";
+        modalBackground.style.alignItems = "center";
+        modalBackground.style.justifyContent = "center";
+
+        // Create the modal container
+        const modalContainer = document.createElement("div");
+        modalContainer.id = "modal-container";
+        modalContainer.style.position = "relative";
+        modalContainer.style.width = "80%";
+        modalContainer.style.maxWidth = "600px";
+        modalContainer.style.backgroundColor = "#2c3e50";
+        modalContainer.style.color = "#f5f5f5";
+        modalContainer.style.borderRadius = "8px";
+        modalContainer.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
+        modalContainer.style.padding = "20px";
+
+        // Add the close button
+        const closeButton = document.createElement("button");
+        closeButton.innerHTML = "Close &#x2715;"; // "✕" symbol
+        closeButton.id = "close-modal";
+        closeButton.style.position = "absolute";
+        closeButton.style.top = "-15px";
+        closeButton.style.right = "0";
+        closeButton.style.backgroundColor = "#4c77af";
+        closeButton.style.color = "white";
+        closeButton.style.border = "none";
+        closeButton.style.width = "100%";
+        closeButton.style.textAlign = "right";
+        closeButton.style.padding = "10px 20px";
+        closeButton.style.cursor = "pointer";
+        closeButton.style.fontSize = "1rem";
+        closeButton.style.fontWeight = "bold";
+        closeButton.style.borderRadius = "8px 8px 0 0";
+
+        // Add event listener to close the modal
+        closeButton.onclick = () => {
+            document.body.removeChild(modalBackground);
+        };
+
+        // Populate the modal content
+        modalContainer.innerHTML = `
+            <h2 style="margin-top: 40px; color: #78aaff;">${data.title}</h2>
+            <p><strong>Question:</strong> ${data.question}</p>
+            <div style="margin-top: 10px;"><strong>Answer:</strong> ${data.answer}</div>
+        `;
+
+        // Append the close button and modal container
+        modalContainer.prepend(closeButton);
+        modalBackground.appendChild(modalContainer);
+
+        // Add the modal to the body
+        document.body.appendChild(modalBackground);
+
+        // Re-render MathJax if needed
+        if (window.MathJax) {
+            MathJax.typesetPromise([modalContainer]);
+        }
+    }
+  </script>
+</body>
+</html>
