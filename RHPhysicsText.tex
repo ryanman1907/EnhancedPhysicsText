@@ -1,0 +1,272 @@
+\documentclass[titlepage]{article}
+
+% PACKAGES
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{lettrine}
+\usepackage{makecell}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{multicol}
+\usepackage{lipsum}
+
+% PAGE HEADERS
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+\renewcommand{\headrulewidth}{0pt}
+
+% GRAPHICS
+
+\graphicspath{{./images/}}
+
+% SECTION FORMAT
+
+\renewcommand{\thesection}{PART \Roman{section}}
+\renewcommand{\thesubsection}{\Roman{subsection}}
+
+\titleformat{\section}[display]{\Large\bfseries\filcenter}{\thesection}{.5em}{}
+\titleformat{\subsection}[display]{\large\bfseries\filcenter}{\thesubsection}{0em}{\uppercase}
+
+% FIGURES
+
+\renewcommand{\thefigure}{\roman{figure}}
+
+\renewcommand{\figurename}{\textsc{Fig.}}
+
+\newcommand{\fig}[3]{
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=\linewidth]{#1}
+        \caption{\textbf{#2}}
+        \label{fig:#3}
+    \end{figure}
+}
+
+% EQUATIONS
+
+\newcommand{\eq}[1]{
+    \begin{equation*}
+    \begin{split}
+        #1
+    \end{split}
+    \end{equation*}
+}
+
+\newcommand{\eqnum}[1]{
+    \begin{equation}
+    \begin{split}
+        #1
+    \end{split}
+    \end{equation}
+}
+
+% REFERENCES
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    filecolor=blue,
+    urlcolor=blue,
+    linktoc=page,
+    pdfpagelayout=TwoPageRight
+}
+
+\newcommand{\secref}[1]{\hyperref[sec:#1]{Section \ref{sec:#1}}}
+
+\newcommand{\figref}[1]{\hyperref[fig:#1]{Fig.~\ref{fig:#1}}}
+
+% LARGE FIRST LETTER OF SECTION
+
+\newcommand{\firstword}[2]{
+    \lettrine[lines=3,nindent=0em,findent=0.5em,realheight]{#1}{#2}
+}
+
+% TABLE OF CONTENTS FORMAT
+
+\renewcommand{\contentsname}{CONTENTS}
+\renewcommand{\cfttoctitlefont}{\hfil\bfseries\fontsize{15pt}{0pt}\selectfont}
+\renewcommand{\cftaftertoctitleskip}{0.5\baselineskip}
+\renewcommand{\cftsecfont}{\bfseries}
+
+\addtolength{\cftsecnumwidth}{40pt}
+\addtolength{\cftsubsecnumwidth}{10pt}
+\setlength{\cftbeforetoctitleskip}{-3em}
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{2}
+
+% TITLE SETUP
+
+\title{\textbf{\huge{Physics for the Particularly Pensive Pedestrian}\\\Large{Bryan Anderson}}}
+
+% \author{
+%     Secondary Author
+%     \and
+%     Tertiary Author
+% }
+
+\date{}
+
+% DOCUMENT
+
+\begin{document}
+
+% TITLE
+
+\maketitle
+
+% PREFACE
+
+\begin{center}
+    \textbf{\Large{What is this?}} 
+\end{center}
+
+This is a prototype of an introductory physics text that aims to provide barebones explanations of topics with the goal of allowing
+
+
+
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+
+% \textit{Some Left Text, (Maybe a Date)} \hfill PREFACE AUTHOR
+
+% % TABLE OF CONTENTS
+
+% \pagenumbering{gobble}
+\tableofcontents
+
+% CONTENTS
+
+\clearpage
+\pagenumbering{arabic}
+% \pagestyle{fancy}
+
+\section{Newton's Laws}
+
+\subsection{Newton's First Law: Inertia} \label{sec:I}
+
+Newton's First Law states that ``an object in motion will stay in motion unless acted on by an external force.'' In modern times, we consider this a fact, but for a minute, let's appreciate the fact this is not completely obvious. When we play catch with a friend, the object being thrown around does not continue flying off into space indefinitely. Instead, it assumes a parabolic trajectory toward the ground \footnote{Assuming no air resistance of course, and flat space time for that matter.}, or your friend's baseball mitt.
+Suppose you are an observer who was unaware of the fact that Earth was a massive object exerting a radially inward force. You might reasonably conclude that objects tend to stop moving, even in the absence of an external force. However, you and I know that the Earth exerts a gravitational force on all objects which is the \textit{real} reason that they stop moving. 
+
+\subsection{Newton's Second Law: Net Forces}
+
+Newton's Second Law states that the sum of forces of an object is equal to the mass of that object times the accelaration. 
+This is a useful formula because if we can understand what forces are acting on an object, we can find it's acceleration, velocity, and trajectory. These are known as the kinematic equations. 
+For a constant force $F$ acting on an object with mass $m$, they can be derived as follows:
+
+\begin{align}
+    F &= ma  \\
+    \int_0^t a dt &= \int \frac{F}{m} dt \\
+    v(t) - v(0) &= \frac{F}{m} t \\
+    \int_0^t v(t) dt &= \int \left(\frac{F}{m} t + v(0) \right) dt \\
+    x(t) - x(0) &= \frac{F}{m}t^2 + v(0) t \\
+    x(t) &= \frac{F}{m} t^2 + v(0)t + x(0)
+\end{align}
+where $v(0)$ and $x(0)$ represent the initial velocity and position, repectively. These are referred to as the \textit{initial conditions}. Take this equation, and plot it with time $t$ on the horizontal axis and position $x(t)$ on the vertical axis and you will see that it is the parabolic trajectory claimed in the previous section. 
+This describes one dimension motion, but we can use vectors, denoted by a little arrow on top (e.g. $\vec{x}$) or in bold, which I will use in this text, to describe motion in the 3 dimensional world. 
+\begin{equation}
+    \mathbf{x}(t) = \begin{bmatrix}
+    x(t) \\ y(t) \\ z(t)
+    \end{bmatrix} 
+    \quad 
+    \mathbf{v}(t) = \begin{bmatrix}
+        v_x(t)\\ v_y(t) \\ v_z(t)
+    \end{bmatrix}
+    \quad 
+    \mathbf{a}(t) = \begin{bmatrix}
+        a_x(t) \\ a_y(t) \\ a_z(t) 
+    \end{bmatrix}
+    \quad 
+    \mathbf{F}(t) = \begin{bmatrix}
+        F_x(t) \\ F_y(t) \\ F_z(t)
+    \end{bmatrix}
+\end{equation}
+where each component from top to bottom describes the quantity in each spatial direction. Note that we are now explicityly letting force and acceleration vary with time. It can be any arbitray function, leading to much more exciting equations of motion than those above!
+Fix the force for each spatial component, and you can find that in fact
+\begin{equation}
+    \mathbf{x}(t) = \frac{\mathbf{F}}{m} t^2 + \mathbf{v}(0)t + \mathbf{x}(0)
+\end{equation}
+This is virtually identical to the previous equation, but notice how it really encodes three different equations! Write it out for yourself if you do not believe me.
+
+\subsection{Newton's Third Law: Equal and Opposite Forces}
+
+Newton's Third Law states that for every action there is an equal and opposite reaction. If you push on a wall, the wall pushes back on you. If you kick a soccer ball, the soccer ball kicks you back, sort of. 
+
+\subsection{Problems}
+\begin{enumerate}
+    \item Suppose you are doing donuts in a Walmart parking lot going in perfect circles. Your friend in the backseat throws a projectile straight up in the air. Describe its motion relative to the car.
+    \item Consider a strong gust of wind exerting a constant force of $F = 10$ N on $5$ kg object initially moving with velocity of $5$ m/s and is $10$ m above the ground. Assume the force is acting on the object   Assuming a downward gravitational acceleration of $g = 9.8 \textrm{m/s}^2$, find the how much further the object travels due to the gust of wind than it would have otherwise. \\
+    \item Repeat the problem above, but let $F \rightarrow F(t) = (10 \textrm{ N})t^2. $
+    \item Conceptually explain how paddle boating works using Newton's Third Law.
+\end{enumerate}
+
+
+\section{Energy and Momentum}
+\subsection{Energy}
+The best way to get a sense of \textit{energy} is to solve problems, but before doing that, I suppose we can make a few definitions.\footnote{This is true for all physics problems, since every physical quantity was just made up by humans. It just turns out that we have been solving projectile motion problems since infancy so quantities like ``velocity'' and ``position'' make more sense at first compared to ones like ``energy''.} Mechanical energy can be written as 
+\begin{equation}
+    E = K + U
+\end{equation} 
+where $E$ is the total energy, $K$ is the kinetic energy, and $U$ is the potential energy. These quantities are typically problem specific. For example, for a simple projectile a small distance above the surface of the Earth, 
+the kinetic and potential energies are given as 
+\begin{equation}
+    K = \frac{1}{2} m v^2 \quad \textrm{ and } \quad U = mgh
+\end{equation}
+where $m$ is the max, $v$ is the speed, $h$ is the height above the ground, and $g$ is the usual gravitational acceleration. Until the ball hits the ground and loses energy to bouncing off the ground, $E$ is a constant value. That is, energy is conserved.
+
+Total energy of a system is conserved as long as no \textit{nonconservative} forces are at play. Examples of non-conservative forces are friction and air resistance. Gravity is a conservative force. For the reader familiar with multivariable calculus, conservative forces satisfy 
+\begin{equation}
+    \mathbf{F} = -\nabla U
+\end{equation}
+where $U$ is a scalar function. No matter what trajectory an object takes while under the influence of conservative forces, its total mechanical enegry is conserved.
+
+\subsection{Momentum}
+Momentum is a familiar concept in everyday life. For example, when you are driving down the highway, you have a lot of momentum. When you are a pedestrian waiting for the crosswalk, you have no momentum, at least relative to the ground. The momentem $\mathbf{p}$ of an object with mass $m$ moving at speed $v$ can be expressed as
+\begin{equation}
+    \mathbf{p} = m\mathbf{v}
+\end{equation}.
+Momentum is conserved for a system unless acted on by outside forces. This is helpful for collisions. For instance, suppose we have two objects of masses $m_1$ and $m_2$ and velocities of $v_1$ and $v_2$ that collide in 1 dimension and stick together. We can write down the following momentum conservation equation:
+\begin{align}
+    p_1 + p_2 &= p_{\textrm{final}}\\
+    m_1 v_1 + m_2 v_2 &= (m_1 + m_2) v_f
+\end{align}
+where $p_f$ is the momentum of the conserved system. We can solve this equation with momentum conservation alone. If the objects bounce off eachother in what is known as an elastic collision,
+we must factor in energy conservation. That is, we must solve the following system:
+\begin{align}
+    m_1 v_{1i} + m_2 v_{2i} &= m_1 v_{1f} + m_2 v_{2f} \\
+    \frac{1}{2} m {v_{1i}}^2 + \frac{1}{2} mv_{2i}^2 &= \frac{1}{2} mv_{1f}^2 + \frac{1}{2} mv_{2f}^2 + E_{\textrm{loss}}
+\end{align}
+where the additional subscript on the velocities indicate intitial and final values, and the second equation accounts for the energy lost. 
+
+
+% \subsection{Work}
+
+\subsection{Problems}
+
+\begin{enumerate}
+    \item You (70 kg) are standing on a frictionless infinite slab of ice. A stack of 10 hockey pucks (0.17 kg each) come in from infinity with a speed of 25 m/s of and you catch all of them. What is your change in speed after catching the stack of pucks? 
+    \item Challenge: Suppose you are a joyful monkey swinging from tree branch to tree branch. While in mid-air, you (15 kg) throw a bundle of bananas (3 kg) to a friend in a nearby tree such that you release the bundle perpendicular to your trajectory, parallel to the ground, and at your maximum height. Moreover, your speed at maximum height is 5 m/s, the tree brances are 10 m apart, and you aim to jump from the middle of one branch to the middle of the other, assuming no bananas are thrown. If each tree branch is 3 m long, how fast can you throw the bananas until you would be set of course enough to miss the branch? Assume air resistance is negligible, gravitational acceleration is $g = 9.8$ m/s, and that you can be modeled as a sphere with radius 1 m. \footnote{For completely clarity, you can also assume that the tree branches would form opposite sides of a rectangle.}\\
+    \item You are running due northeast and collide with a person running due north. Assume you can again be modeled as a point with mass $m_1$ and the other person has mass $m_2$. After the collision, their speed is $v_1$, making an angle of $15$ degrees with the due north axis and $75$ degrees with the due east axis. Moreover, the collision is perfectly elestic (no energy is lost). What is your trajectory?
+\end{enumerate}
+
+
+
+% \section{Rotations}
+\end{document}
